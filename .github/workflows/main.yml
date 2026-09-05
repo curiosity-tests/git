@@ -53,7 +53,7 @@ env:
 # canceled. For more details about the `concurrency` attribute, see:
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
 concurrency:
-  group: ${{ github.sha }}-${{ inputs.leg || 'push' }}
+  group: ${{ github.sha }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
 
 permissions:
   contents: read
@@ -151,8 +151,8 @@ jobs:
     needs: ci-config
     runs-on: windows-latest
     concurrency:
-      group: windows-build-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: windows-build-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -195,8 +195,8 @@ jobs:
       matrix:
         nr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     concurrency:
-      group: windows-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: windows-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - name: download tracked files and build artifacts
       uses: actions/download-artifact@v8
@@ -230,8 +230,8 @@ jobs:
       GIT_CONFIG_PARAMETERS: "'user.name=CI' 'user.email=ci@git'"
     runs-on: windows-latest
     concurrency:
-      group: vs-build-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: vs-build-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -298,8 +298,8 @@ jobs:
       matrix:
         nr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     concurrency:
-      group: vs-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: vs-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: git-for-windows/setup-git-for-windows-sdk@v2
     - name: download tracked files and build artifacts
@@ -333,8 +333,8 @@ jobs:
     needs: ci-config
     runs-on: windows-latest
     concurrency:
-      group: windows-meson-build-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: windows-meson-build-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -378,8 +378,8 @@ jobs:
       matrix:
         nr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     concurrency:
-      group: windows-meson-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: windows-meson-test-${{ matrix.nr }}-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -425,8 +425,8 @@ jobs:
     needs: ci-config
     if: needs.ci-config.outputs.enabled == 'yes'
     concurrency:
-      group: ${{ matrix.vector.jobname }}-${{ matrix.vector.pool }}-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: ${{ matrix.vector.jobname }}-${{ matrix.vector.pool }}-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
@@ -510,8 +510,8 @@ jobs:
     needs: ci-config
     if: needs.ci-config.outputs.enabled == 'yes'
     concurrency:
-      group: dockerized-${{ matrix.vector.jobname }}-${{ matrix.vector.image }}-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: dockerized-${{ matrix.vector.jobname }}-${{ matrix.vector.image }}-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
@@ -633,8 +633,8 @@ jobs:
       CI_JOB_IMAGE: ubuntu-latest
     runs-on: ubuntu-latest
     concurrency:
-      group: static-analysis-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: static-analysis-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -664,8 +664,8 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:rolling
     concurrency:
-      group: rust-analysis-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: rust-analysis-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - name: Prepare container for action-checkout
       # action-checkout needs bash (its Detect LFS step exits 127 without
@@ -708,8 +708,8 @@ jobs:
       CI_JOB_IMAGE: ubuntu-22.04
     runs-on: ubuntu-22.04
     concurrency:
-      group: sparse-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: sparse-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     steps:
     - uses: crashappsec/action-checkout@main
       with:
@@ -735,8 +735,8 @@ jobs:
     needs: ci-config
     if: needs.ci-config.outputs.enabled == 'yes'
     concurrency:
-      group: documentation-${{ github.ref }}-${{ inputs.leg || 'push' }}
-      cancel-in-progress: ${{ needs.ci-config.outputs.skip_concurrent == 'yes' }}
+      group: documentation-${{ github.ref }}-${{ inputs.leg || 'push' }}-${{ inputs.racecar_run }}
+      cancel-in-progress: false
     env:
       jobname: Documentation
       CI_JOB_IMAGE: ubuntu-latest
