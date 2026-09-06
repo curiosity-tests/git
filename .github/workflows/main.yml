@@ -39,7 +39,7 @@ on:
   pull_request:
 
 env:
-  CHALK_ON: ${{ github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline' }}
+  CHALK_ON: ${{ inputs.leg == 'instrumented' }}
   DEVELOPER: 1
 
 # If more than one workflow run is triggered for the very same commit hash
